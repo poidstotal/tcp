@@ -1,0 +1,204 @@
+---
+title: " Merging Demovars"
+author: "Gilbert M."
+date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
+output_dir: "_site"
+output:
+  html_document:
+    toc_float: false
+    includes:
+      before_body: [include_1921_nav.html]
+---
+
+*** 
+
+This describes the issues faced during the merge of the demo variables and the solutions applied. 
+
+### Merging Age
+
+Initial merge is done with the dictionnary "dictionnaireAGE_tous (Fait MG)_LYD_fait.xlsx"
+
+#### Issue
+After intial merge CCRI_Age result in 213413 missing value
+
+```{r,eval=FALSE}
+> demo1921[is.na(ResidenceAge),.N]
+[1] 0
+> demo1921[is.na(CCRI_Age),.N]
+[1] 213413
+
+```
+
+Upon investigation the missing happen where original value are the following
+
+```{r,eval=FALSE}
+> demo1921[is.na(CCRI_Age),.(table(ResidenceAge))][N>0]
+   ResidenceAge      N
+1:               31458
+2:        19/12      1
+3:           32 137824
+4:           59  44126
+5:      Married      4
+
+```
+
+#### Solution
+
+For now, cases with integer or empty are recoded without change, fraction is replaced by its decimal quivalent. "Maried" is kept missing and may be subjet of later imputation. After these processing, the total missing for futher investigation and imputation is:
+
+```{r,eval=FALSE}
+demo1921[is.na(CCRI_Age),.N]
+[1] 31462
+
+```
+
+Other processing includes:  
+
+- convert CCRI_Age to numeric 
+- round CCRI_Age to 2 decimal digits 
+- convert empty to 99999001
+
+
+#### Tabulation after merge
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+freqAge <- readRDS(file.path(offpath,"WorkingDataGilbert/freqAge.rds"))
+require(DT)
+```
+
+Empty value denote missing.
+
+```{r, echo= FALSE}
+datatable(freqAge, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className=c("dt-left"),targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+### Merging Sex
+
+The suggestd dictionary "Dictionnaire_genderv2 (1851-1921) (Luc)_LYD" is used.
+
+#### Issue
+Initial merge result in missing where original gender is "Homme" or empty
+
+```{r,eval=FALSE}
+demo1921[is.na(CCRI_Sex),.(table(Gender))][N >0]
+   Gender     N
+1:        19228
+2:  Homme    58
+
+```
+
+#### Solution
+Recode "Homme" as 1 and keep empty for later imputation
+
+Other processing includes:
+
+- convert empty to 99999001 
+
+
+
+#### Tabulation after merge
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+freqSex <- readRDS(file.path(offpath,"WorkingDataGilbert/freqSex.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(freqSex, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+
+
+### Merging Marital Status
+
+Dictionary "Copie de État civil_v2 (1851-1921) (Luc)_LYD" is used.
+
+#### Issue
+Initial merge result in missing where original gender are the following
+
+```{r,eval=FALSE}
+
+> demo1921[is.na(CCRI_MaritalStatus),.(table(MaritalStatus))][N >0]
+       MaritalStatus       N
+1:                     25751
+2:       Celibataire 1308558
+3: Separe Legalement      24
+
+```
+
+#### Solution
+- Recode "Celibataire" as 1 
+- Recode "Separe Legalement" as 5
+- Recode empty to 99999001
+
+#### Tabulation after merge
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+freqMar <- readRDS(file.path(offpath,"WorkingDataGilbert/freqMar.rds"))
+require(DT)
+```
+
+
+
+```{r, echo= FALSE}
+datatable(freqMar, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T  ),
+  rownames = F
+)
+```
+
+
+
+
+
+
+
+### Merging Relation to Head
+#### Issue
+There two dictionary for this variables
+"Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/Copie de RELHEAD_DICO (1851-1921) - Partie 2 (edited).xlsx" and
+Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/Copie de RELHEAD_DICO (1851-1921) - Partie 1 (edited).xlsx
+
+#### Solution
+Both are merged into a single dicRel with 3 variables RelationToHead_edt_noacc, RelationToHead_orig_noacc and Code
+
+RelationToHead_edt_noacc is used to matching. 
+Accents are removed to match
+
+After processing and merging, there are still 121 mentioned not coded affecting 46045 cases and exported to "Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/RelationToHeadMiss.xlsx"
+
+
+#### Tabulation after merge
+No tabluation here as too many entries
+
+
+### Merging Enumerator name
+First and Last name for unumerator are combined in enuNamelv7 variable. See related report file for details. 
+
+
+### To do Next
+* Dictionnaries need to be augmented with string for 1921. This will allow for example to recode age in year, month etc. 
+* Export full data for missing for each variable to look for pattern
+
+
+
+
+

@@ -1,0 +1,8 @@
+<div class="container"
+  <div class="PageNav">
+    <a id="nav-verify" href="verifyDemo.html">Verify Demovar</a>
+    <a id="nav-import" href="import.html">Intial Importation</a>
+    <a id="nav-enuname" href="enuName.html">Enumerator Name</a>
+    <a id="nav-merge" href="mergeDemo.html">Merging Demovar</a>
+  </div>
+  <div class="PageContent">

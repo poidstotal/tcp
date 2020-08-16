@@ -1,0 +1,12 @@
+---
+title: "Report for 1921 census"
+#author: "Gilbert M."
+#date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc_float: false
+    includes:
+      before_body: [include_1921_nav.html]
+#css: "sstyle.css"
+---
+Coming soon ...

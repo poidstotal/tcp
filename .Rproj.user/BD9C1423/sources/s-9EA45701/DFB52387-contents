@@ -1,0 +1,12 @@
+#
+#```{r child = 'verifyDemo.rmd'}
+#```
+#
+```{r child = 'mergeDemo.rmd'}
+```
+
+```{r child = 'enuName.rmd'}
+```
+
+```{r child = 'import.rmd'}
+```

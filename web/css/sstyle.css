@@ -1,0 +1,19 @@
+.tocify {
+    border: 0 ;
+    border-radius: 0;
+}
+
+.main-container {
+    max-width: 1170px !important;
+}
+
+.pageContainer {
+    display: flex;
+}
+
+.pNav {
+    margin-top: 23px;
+    min-width: 290px;
+    line-height: 40px;
+    padding-right: 30px;
+}

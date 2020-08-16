@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Gilbert M." />
+
+
+<title>Merging Demovars</title>
+
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="site_libs/datatables-binding-0.15/datatables.js"></script>
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="site_libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="css\sstyle.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">TCP Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="general.html">General</a>
+</li>
+<li>
+  <a href="report1921.html">1921</a>
+</li>
+<li>
+  <a href="report1911.html">1911</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="pageContainer">
+  <div class="pNav">
+    <ul>
+      <li>
+        <a id="nav-import" href="import.html">Issues on Intial Importation</a>
+      </li>
+      <li>
+        <a id="nav-enuname" href="enuName.html">Cleaning up Enumerator Name</a>
+      </li>
+      <li>
+         <a id="nav-merge" href="mergeDemo.html">Fixing and Merging Demovars</a>
+      </li>
+      <li>
+         <a id="nav-verify" href="verifyDemo.html">Verify and Crosstab Demovar</a>
+      </li>
+    </ul>
+   
+  </div>
+  <div class="pContent">
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Merging Demovars</h1>
+<h4 class="author">Gilbert M.</h4>
+<h4 class="date">Created on: 20 April, 2020, Updated on: 15 August, 2020</h4>
+
+</div>
+
+
+<hr />
+<p>This describes the issues faced during the merge of the demo variables and the solutions applied.</p>
+<div id="merging-age" class="section level3">
+<h3>Merging Age</h3>
+<p>Initial merge is done with the dictionnary "dictionnaireAGE_tous (Fait MG)_LYD_fait.xlsx"</p>
+<div id="issue" class="section level4">
+<h4>Issue</h4>
+<p>After intial merge CCRI_Age result in 213413 missing value</p>
+<pre class="r"><code>&gt; demo1921[is.na(ResidenceAge),.N]
+[1] 0
+&gt; demo1921[is.na(CCRI_Age),.N]
+[1] 213413</code></pre>
+<p>Upon investigation the missing happen where original value are the following</p>
+<pre class="r"><code>&gt; demo1921[is.na(CCRI_Age),.(table(ResidenceAge))][N&gt;0]
+   ResidenceAge      N
+1:               31458
+2:        19/12      1
+3:           32 137824
+4:           59  44126
+5:      Married      4</code></pre>
+</div>
+<div id="solution" class="section level4">
+<h4>Solution</h4>
+<p>For now, cases with integer or empty are recoded without change, fraction is replaced by its decimal quivalent. “Maried” is kept missing and may be subjet of later imputation. After these processing, the total missing for futher investigation and imputation is:</p>
+<pre class="r"><code>demo1921[is.na(CCRI_Age),.N]
+[1] 31462</code></pre>
+<p>Other processing includes:</p>
+<ul>
+<li>convert CCRI_Age to numeric</li>
+<li>round CCRI_Age to 2 decimal digits</li>
+<li>convert empty to 99999001</li>
+</ul>
+</div>
+<div id="tabulation-after-merge" class="section level4">
+<h4>Tabulation after merge</h4>
+<p>Empty value denote missing.</p>
+<div id="htmlwidget-26c873499b521cccf794" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-26c873499b521cccf794">{"x":{"filter":"none","data":[[36,0.25,29,1,41,33,19,50,7,2,6,14,4,62,22,48,28,69,12,34,15,13,47,3,5,10,0.83,32,51,65,39,18,11,27,30,53,38,21,31,45,42,37,16,25,72,55,60,26,44,17,71,40,20,9,56,35,23,70,8,52,24,0.5,0.17,64,0.75,0.58,49,61,59,0.92,0.67,66,46,58,86,99999001,63,43,54,67,0.33,0.08,73,76,0.42,57,78,68,82,74,87,77,75,81,80,88,84,83,79,96,85,90,89,93,94,110,95,0,91,97,92,104,98,99,105,100,107,102,103,106,101,108,109,1.58],["36","3/12","29","1","41","33","19","50","7","2","6","14","4","62","22","48","28","69","12","34","15","13","47","3","5","10","10/12","32","51","65","39","18","11","27","30","53","38","21","31","45","42","37","16","25","72","55","60","26","44","17","71","40","20","9","56","35","23","70","8","52","24","6/12","2/12","64","9/12","7/12","49","61","59","11/12","8/12","66","46","58","86","&lt;empty&gt;","63","43","54","67","4/12","1/12","73","76","5/12","57","78","68","82","74","87","77","75","81","80","88","84","83","79","96","85","90","89","93","94","110","95","Infant, 0, infant","91","97","92","104","98","99","105","100","107","102","103","106","101","108","109","19/12"],[125917,20266,125409,210896,88131,119091,144189,101340,210894,209099,217511,175830,216976,47219,141187,89285,146676,25848,191899,121826,163716,172931,75881,214177,216420,195656,15750,137824,57286,47976,106661,161110,178513,132536,161230,62281,136363,143884,114413,111449,116661,110821,167537,143190,23938,65343,70894,138059,83633,156008,19489,147003,149240,193533,59403,144565,137650,34077,207520,77349,140894,19588,15275,39717,15206,13350,72483,38118,44125,14601,16760,33478,81984,55952,3863,31458,43037,91774,62372,30974,18787,22275,18729,15956,15145,49532,13190,33618,6965,17087,3223,12109,19501,6674,11949,2667,5751,5751,9431,518,4677,1943,2032,766,558,10,569,6329,1115,279,955,7,386,228,10,96,3,21,6,8,24,4,2,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>CCRI_Age<\/th>\n      <th>ResidenceAge<\/th>\n      <th>freq<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[[0,"asc"]],"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-right","targets":2}],"scrollX":true,"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="merging-sex" class="section level3">
+<h3>Merging Sex</h3>
+<p>The suggestd dictionary "Dictionnaire_genderv2 (1851-1921) (Luc)_LYD" is used.</p>
+<div id="issue-1" class="section level4">
+<h4>Issue</h4>
+<p>Initial merge result in missing where original gender is “Homme” or empty</p>
+<pre class="r"><code>demo1921[is.na(CCRI_Sex),.(table(Gender))][N &gt;0]
+   Gender     N
+1:        19228
+2:  Homme    58</code></pre>
+</div>
+<div id="solution-1" class="section level4">
+<h4>Solution</h4>
+<p>Recode “Homme” as 1 and keep empty for later imputation</p>
+<p>Other processing includes:</p>
+<ul>
+<li>convert empty to 99999001</li>
+</ul>
+</div>
+<div id="tabulation-after-merge-1" class="section level4">
+<h4>Tabulation after merge</h4>
+<div id="htmlwidget-7b17db8749f0cf47b9c2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7b17db8749f0cf47b9c2">{"x":{"filter":"none","data":[["1","2","99999001"],["Male, Homme","Female","&lt;empty&gt;"],[4490091,4246036,19228]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>CCRI_Sex<\/th>\n      <th>Gender<\/th>\n      <th>freq<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[[0,"asc"]],"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-right","targets":2}],"scrollX":true,"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="merging-marital-status" class="section level3">
+<h3>Merging Marital Status</h3>
+<p>Dictionary "Copie de État civil_v2 (1851-1921) (Luc)_LYD" is used.</p>
+<div id="issue-2" class="section level4">
+<h4>Issue</h4>
+<p>Initial merge result in missing where original gender are the following</p>
+<pre class="r"><code>&gt; demo1921[is.na(CCRI_MaritalStatus),.(table(MaritalStatus))][N &gt;0]
+       MaritalStatus       N
+1:                     25751
+2:       Celibataire 1308558
+3: Separe Legalement      24</code></pre>
+</div>
+<div id="solution-2" class="section level4">
+<h4>Solution</h4>
+<ul>
+<li>Recode “Celibataire” as 1</li>
+<li>Recode “Separe Legalement” as 5</li>
+<li>Recode empty to 99999001</li>
+</ul>
+</div>
+<div id="tabulation-after-merge-2" class="section level4">
+<h4>Tabulation after merge</h4>
+<div id="htmlwidget-988a2800eb5fba29ad71" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-988a2800eb5fba29ad71">{"x":{"filter":"none","data":[["2","1","3","5","99999001","4"],["Married","Single, Célibataire","Widowed, Veuf","Séparé Légalement, Separated","&lt;empty&gt;","Divorced"],[3335732,5054696,335191,806,25751,3179]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>CCRI_MaritalStatus<\/th>\n      <th>MaritalStatus<\/th>\n      <th>freq<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[[0,"asc"]],"columnDefs":[{"className":"dt-left","targets":0},{"className":"dt-right","targets":2}],"scrollX":true,"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="merging-relation-to-head" class="section level3">
+<h3>Merging Relation to Head</h3>
+<div id="issue-3" class="section level4">
+<h4>Issue</h4>
+<p>There two dictionary for this variables “Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/Copie de RELHEAD_DICO (1851-1921) - Partie 2 (edited).xlsx” and Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/Copie de RELHEAD_DICO (1851-1921) - Partie 1 (edited).xlsx</p>
+</div>
+<div id="solution-3" class="section level4">
+<h4>Solution</h4>
+<p>Both are merged into a single dicRel with 3 variables RelationToHead_edt_noacc, RelationToHead_orig_noacc and Code</p>
+<p>RelationToHead_edt_noacc is used to matching. Accents are removed to match</p>
+<p>After processing and merging, there are still 121 mentioned not coded affecting 46045 cases and exported to “Z:/CODING_Dictionaries_Variables/VARIABLES_DIVERS/4_Demography_A_S_M_B_D_Health_Relate/Relationship/RelationToHeadMiss.xlsx”</p>
+</div>
+<div id="tabulation-after-merge-3" class="section level4">
+<h4>Tabulation after merge</h4>
+<p>No tabluation here as too many entries</p>
+</div>
+</div>
+<div id="merging-enumerator-name" class="section level3">
+<h3>Merging Enumerator name</h3>
+<p>First and Last name for unumerator are combined in enuNamelv7 variable. See related report file for details.</p>
+</div>
+<div id="to-do-next" class="section level3">
+<h3>To do Next</h3>
+<ul>
+<li>Dictionnaries need to be augmented with string for 1921. This will allow for example to recode age in year, month etc.</li>
+<li>Export full data for missing for each variable to look for pattern</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

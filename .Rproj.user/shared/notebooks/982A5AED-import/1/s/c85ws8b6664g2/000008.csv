@@ -1,0 +1,9 @@
+"0","offpath <- ""Z:/Recensements_1852_1921/1921"""
+"0","varSize <- readRDS(file.path(""./data/varSize.rds""))"
+"0","require(DT)"
+"2","Loading required package: DT
+"
+"2","Registered S3 method overwritten by 'htmlwidgets':
+  method           from         
+  print.htmlwidget tools:rstudio
+"

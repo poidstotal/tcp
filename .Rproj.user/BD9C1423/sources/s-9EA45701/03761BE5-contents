@@ -1,0 +1,267 @@
+---
+title: "Demovar verification"
+author: "Gilbert M."
+date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
+output_dir: "_site"
+output:
+  html_document:
+    toc_float: false
+    includes:
+      before_body: [include_1921_nav.html]
+---
+
+
+*** 
+
+Various tabulation and verification for demovars.
+
+Created on: 7 July, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`
+
+### Missing Stats
+#### Missing summary for all variables
+
+RelationToHead has the highest missing value followed by Surname and age and MaritalStatus. The number of missing for Surname may be reduced by replacing mentions of " with preceding surname.
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+MissStat <- readRDS(file.path(offpath,"WorkingDataGilbert/MissStat.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(MissStat, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+Result above show there are 11380 cases where all variables are empty. A look at the manuscript show that these cases correspond to cover pages. These recordes can be removeved safely from all files.
+
+See an example at https://www.ancestryinstitution.ca/imageviewer/collections/8991/images/1921_001-E002853146 (Need to be logged in with ancestry)
+
+Below is a list of 10 random image file names for further investigation. Just replace the number in the link above, to view its image.
+
+```{r,eval=FALSE}
+> sample(MissPage$ImageFileName,10)
+ [1] 1921_115-E003071112 1921_130-E003090609 1921_045-E002910325
+ [4] 1921_025-E002883750 1921_114-E003069466 1921_063-e002931806
+ [7] 1921_141-E003103610 1921_113-E003068923 1921_161-E003223397
+[10] 1921_156-E003123247
+196235 Levels: ?ImageFileName 1921_001-E002852803 ... 1921_163-E003226528
+> 
+
+```
+
+
+#### Percentage percentage by province
+
+A difference in frequency for a given variable and its CCRI equivalent is the number of mentions without CCRI coding for that variable.
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+MissStat <- readRDS(file.path(offpath,"WorkingDataGilbert/MissStat1.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(MissStat,  filter = "top", options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+
+### Age and Sex
+#### Age (group) pyramid by Sex
+
+
+```{r, include = FALSE}
+require(DT)
+require(data.table)
+require(ggplot2)
+
+offpath <- "Z:/Recensements_1852_1921/1921"
+AgeSex <- readRDS(file.path(offpath,"WorkingDataGilbert/AgeSex.rds"))
+AgeSex[,`CCRI_Age(ResidenceAge)`:=sub(' \\(.*', '', `CCRI_Age(ResidenceAge)`)]
+AgeSex[`CCRI_Age(ResidenceAge)`=="99999001",`CCRI_Age(ResidenceAge)`:=NA]
+AgeSex[,`CCRI_Age(ResidenceAge)`:=as.numeric(`CCRI_Age(ResidenceAge)`)]
+
+AgeSex <- AgeSex[,1:3]
+#AgeSex <- AgeSex[!is.na(`CCRI_Age(ResidenceAge)`),1:3]
+colnames(AgeSex)<- c("Age","Male","Female")
+AgeSex <- melt.data.table(AgeSex, 
+                value.name='Population', 
+                variable.name = 'Gender', 
+                id.vars='Age')
+
+
+## barplots for male populations goes to the left (thus negative sign)
+AgeSex$Population <- ifelse(AgeSex$Gender == "Male",
+                            -1*AgeSex$Population,
+                            AgeSex$Population)
+AgeSex$Age <- cut(AgeSex$Age, breaks = seq(0, 100, 5), right = FALSE) 
+
+```
+
+
+```{r, echo= FALSE}
+n1 <- ggplot(AgeSex, aes(x = Age, y = Population, fill = Gender)) + 
+  geom_bar(data = subset(AgeSex, Gender == "Female"), stat = "identity") +
+  geom_bar(data = subset(AgeSex, Gender == "Male"), stat = "identity") + 
+  scale_y_continuous(labels = paste0(as.character(c(seq(2, 0, -1), seq(1, 2, 1))), "m")) + 
+  coord_flip() + 
+  scale_fill_brewer(palette = "Set1") + 
+  theme_bw()
+
+n1
+```
+
+
+#### Age (details) and Sex
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+AgeSex <- readRDS(file.path(offpath,"WorkingDataGilbert/AgeSex.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(AgeSex, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+### Marital Status and Sex
+
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+MarSex <- readRDS(file.path(offpath,"WorkingDataGilbert/MarSex.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(MarSex, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+### Age and Marital Status
+
+#### Age (group) and Marital Status
+```{r, include = FALSE}
+
+offpath <- "Z:/Recensements_1852_1921/1921"
+AgeMar <- readRDS(file.path(offpath,"WorkingDataGilbert/AgeMar.rds"))
+setnames(AgeMar, old = "CCRI_Age(ResidenceAge)", new = "Age")
+
+AgeMar[,Age:=sub(' \\(.*', '', Age)]
+AgeMar[Age=="99999001",Age:=NA]
+AgeMar[,Age:=as.numeric(Age)]
+
+AgeMar$Age <- cut(AgeMar$Age,breaks = seq(0, 100, 5), right = FALSE) 
+
+AgeMar <- melt.data.table(AgeMar, 
+                          value.name='freq', 
+                          variable.name = 'Marstat', 
+                          id.vars='Age')
+
+AgeMar <- AgeMar[,.(freq=sum(freq)),by=c("Age","Marstat")]
+
+AgeMar <- dcast.data.table(AgeMar, Age ~ Marstat,value.var = 'freq')
+
+
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(AgeMar, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+
+#### Age (details) and Marital Status
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+AgeMar <- readRDS(file.path(offpath,"WorkingDataGilbert/AgeMar.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(AgeMar, options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+### Sex by Geography
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+SexPro <- readRDS(file.path(offpath,"WorkingDataGilbert/SexPro.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(SexPro, filter = "top", options = list(
+  order=list(list(0,"asc")),
+  columnDefs =list(list(className="dt-left",targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

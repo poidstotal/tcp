@@ -1,0 +1,23 @@
+name: "tcp-report"
+navbar:
+  title: "TCP Project"
+  left:
+    - text: "General"
+      href: general.html
+    - text: "1921"
+      href: report1921.html
+    - text: "1911"
+      href: report1911.html
+#    - text: "1901"
+#      href: report1901.html
+
+output_dir: "web"
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+    mathjax: null
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+    css: "css/sstyle.css"

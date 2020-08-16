@@ -1,0 +1,115 @@
+---
+title: "Importing the data"
+author: "Gilbert M."
+date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
+output_dir: "_site"
+output:
+  html_document:
+    toc_float: false
+    includes:
+      before_body: [include_1921_nav.html]
+---
+
+*** 
+This describes the importation process from the .txt file into R, the issues faced during and the solution applied
+
+### Issue with direct importation
+The original file is 49176_8991_1921_Candadian_Census_RawDelivery.txt
+Direct importation failled as some lines have number of columns different that the one auto detected. On investigation, it happen that the "|" symbole which is used as column delimitor in the .txt is included in some some field. The investigation involve reading each line of the .txt file without column sparation with readLines.
+
+
+```{r,eval=FALSE}
+
+# Read all line for investigation
+allLine <- readLines(f1921,encoding = "UTF-8")
+library(stringr)
+# Count number of delimiter per line
+# Make parallel Call for 6 cores cpu
+cl <- makeCluster(getOption("cl.cores", 6))
+colsCount <- parLapply(cl,allLine,str_count,fixed("|"))
+stopCluster(cl)
+# Combine results from all cpu core
+colsCount <- do.call(rbind,colsCount)
+colsCount <- data.table("coln"=colsCount)
+#
+```
+
+
+#### Frequence for colsCount
+
+```{r, eval=FALSE}
+> colsCount[,.N, by= coln.V1]
+   coln.V1       N
+1:      61 8755356
+2:      62      29
+> 
+
+```
+
+
+There a total of 29 out N of lines spread over the entire file where the number of columns is 63 (62 "|" present ) rather than 62 (61 "|" presents). So each time such a lumn is meant, the importation is broken at best or continue with default handling which vary from software to software. In R most package and function would report the error rather than implement a default handling.
+
+The 29 lines with issue are saved in dta63.xlsx for later investigation. The remanining lines are saved unprocessed into dta62.rds
+
+### Optimizing the data for storage
+Working with the data has been a used challenge because of this size and structure. For instance loading full data saved in dta62.rds take up  lage amount of memory and is quite slow for live query. Futhermore its almost impossible to convert to other format such .sav and .sas as the number character is some variable surpasses the limits. These variable variable will probably be trimmed to a character limit if importation is forced for example. The following table show the relative size of each variables in term of total space or memory.
+
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+varSize <- readRDS(file.path("./data/varSize.rds"))
+colnames(varSize) <- c("Variable","Unique","Size","Perc")
+require(DT)
+```
+
+
+```{r, echo= FALSE}
+datatable(varSize, options = list(
+  order=list(list(3,"desc")),
+  columnDefs =list(list(className=c("dt-left"),targets=0)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
+
+For memory saving purpose an optimized version of the full data is saved in 1921_Optimized.rds. The optimization consist of converting character column into factor. Using this file instead of the original will take about 30% less memory.
+
+### Reduce data faster query and export
+Even with reduced file size, the full data still can't be exported to .sav or .sas as there still limitation such as the number of factors. For example trying to export to .sav will produce error.
+
+```{r,eval=FALSE}
+> write_sav(dta1921, file.path(offpath,"1921_Optimized.sav"))
+Error: SPSS only supports levels with <= 120 characters
+Problems: `ResidenceCity`, `SourceDescription`
+
+```
+
+Furthermore, .sav file format take a lot of disk space and is even difficult to load into SPSS. To produced a workable version of the data, we've removed the following variables and export the result into 1921_Reduced.rds and 1921_Reduced.zsav. Saving as .zsav further reduced the file size by about 10% of the .sav format. This workable version is intended to be used by team member working on recoding variables
+
+
+```{r,eval=FALSE}
+xvars <- c("ImageFolder","SourceDescription","ResidenceYear","ResidenceDay",
+           "ResidenceMonth","ResidenceEnumerationDistrict",
+           "ResidenceCity","SourceArchiveRoll","ResidenceTownship",
+           "ResidenceSubEnumerationDistrict","ResidenceRange","ResidenceParish",
+           "ResidenceMunicipality","ResidenceCountry","ResidenceMeridian",
+           "SourcePageNumber","ResidenceLandSection",
+           "SequenceNumber","HouseNumber")
+
+xvars <- setdiff(names(dta1921),xvars)
+dta1921 <- subset(dta1921, select = xvars )
+saveRDS(dta1921,file=file.path(offpath,"1921_Reduced.rds"))
+write_sav(dta1921, file.path(offpath,"1921_Reduced.zsav"), compress = T)
+```
+
+
+### To do Next
+* Manuel process the 29 lines that was exclude from the import
+* 
+
+
+
+
+

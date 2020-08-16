@@ -1,0 +1,7 @@
+"0","datatable(varSize, options = list("
+"0","  order=list(list(3,""desc"")),"
+"0","  columnDefs =list(list(className=c(""dt-left""),targets=0)),"
+"0","  scrollX=T"
+"0","  ),"
+"0","  rownames = F"
+"0",")"

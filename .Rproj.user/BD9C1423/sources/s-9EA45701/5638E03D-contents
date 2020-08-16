@@ -1,0 +1,45 @@
+---
+title: "Cleanup Enumerator Name"
+author: "Gilbert M."
+date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
+output_dir: "_site"
+output:
+  html_document:
+    toc_float: false
+    includes:
+      before_body: [include_1921_nav.html]
+---
+
+*** 
+String Match for Enumerator names. 
+Created on: 30 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`
+
+### Match for 1921 Census
+
+### Description
+
+Details will follow
+
+### Tabulation after merge
+
+
+
+```{r, include = FALSE}
+offpath <- "Z:/Recensements_1852_1921/1921"
+dta <- readRDS(file.path(offpath,"WorkingDataGilbert/enumName1921.rds"))
+require(DT)
+```
+
+
+```{r, echo= FALSE, warning=FALSE}
+datatable(dta, height = 700, options = list(
+  order=list(list(0,"asc")),
+   pageLength = 10,
+  list(lengthMenu = c(10, 20, 30, 50, 200)),
+  columnDefs =list(list(className=c("dt-left"),targets=4)),
+  scrollX=T
+  ),
+  rownames = F
+)
+```
+
