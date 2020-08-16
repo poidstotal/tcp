@@ -11,7 +11,7 @@ navbar:
 #    - text: "1901"
 #      href: report1901.html
 
-output_dir: "web"
+output_dir: "docs"
 output:
   html_document:
     theme: cosmo

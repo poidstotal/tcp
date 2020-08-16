@@ -2,7 +2,6 @@
 title: " Merging Demovars"
 author: "Gilbert M."
 date: "Created on: 20 April, 2020, Updated on: `r format(Sys.time(), '%d %B, %Y')`"
-output_dir: "_site"
 output:
   html_document:
     toc_float: false
